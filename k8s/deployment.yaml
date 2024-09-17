@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-nodejs-app
+  labels:
+    app: devops-nodejs-app
+spec:
+  replicas: 2  # We will run 3 instances (pods) of our app
+  selector:
+    matchLabels:
+      app: devops-nodejs-app
+  template:
+    metadata:
+      labels:
+        app: devops-nodejs-app
+    spec:
+      containers:
+      - name: devops-nodejs-container
+        image: geraldakenji/devsecops-nodejs-app:latest  # Use your DockerHub repo
+        ports:
+        - containerPort: 3000
+        env:
+        - name: SECRET_MESSAGE
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: secret-message  # Will get secret value from Vault through Kubernetes Secrets
